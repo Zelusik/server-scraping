@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/intellij+all,eclipse,vs,macos,windows,java,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij+all,eclipse,vs,macos,windows,java,gradle
 
+### Custom ###
+chrome/chromedriver
+
 ### Eclipse ###
 .metadata
 bin/
