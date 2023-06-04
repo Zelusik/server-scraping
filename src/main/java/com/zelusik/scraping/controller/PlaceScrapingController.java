@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Duration;
 
 @RequiredArgsConstructor
-@RequestMapping("/places/scrap")
+@RequestMapping("/places/scraping")
 @RestController
 public class PlaceScrapingController {
 
