@@ -31,12 +31,12 @@ public class PlaceScrapingService {
         } catch (NoSuchElementException e) {
             WebElement ohInfo = mArticle.findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"));
 
-            String title = ohInfo.findElement(By.cssSelector("strong.tit_operation > span")).getText();
+            String title = ohInfo.findElement(By.cssSelector("strong.tit_operation")).getText();
             if (!title.contains("영업")) {
                 return createBusinessHours(null, null);
             }
 
-            String openingHours = ohInfo.findElement(By.cssSelector("ul.list_operation > li > span")).getText();
+            String openingHours = ohInfo.findElement(By.cssSelector("ul.list_operation")).getText();
             return createBusinessHours(openingHours, null);
         }
 
