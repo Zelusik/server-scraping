@@ -181,10 +181,10 @@ class PlaceScrapingServiceTest {
                 "div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willThrow(NoSuchElementException.class);
         given(mArticle.findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"))).willReturn(ohInfo);
         WebElement ohInfoTitleElem = createWebElemMock("ohInfoTitle");
-        given(ohInfo.findElement(By.cssSelector("strong.tit_operation > span"))).willReturn(ohInfoTitleElem);
+        given(ohInfo.findElement(By.cssSelector("strong.tit_operation"))).willReturn(ohInfoTitleElem);
         given(ohInfoTitleElem.getText()).willReturn("영업시간");
         WebElement openingHoursElem = createWebElemMock("openingHours");
-        given(ohInfo.findElement(By.cssSelector("ul.list_operation > li > span"))).willReturn(openingHoursElem);
+        given(ohInfo.findElement(By.cssSelector("ul.list_operation"))).willReturn(openingHoursElem);
         given(openingHoursElem.getText()).willReturn(openingHours);
         given(converter.parseStrToOHs(openingHours)).willReturn(openingHourDtos);
 
@@ -206,7 +206,7 @@ class PlaceScrapingServiceTest {
                 "div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willThrow(NoSuchElementException.class);
         given(mArticle.findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"))).willReturn(ohInfo);
         WebElement ohInfoTitleElem = createWebElemMock("ohInfoTitle");
-        given(ohInfo.findElement(By.cssSelector("strong.tit_operation > span"))).willReturn(ohInfoTitleElem);
+        given(ohInfo.findElement(By.cssSelector("strong.tit_operation"))).willReturn(ohInfoTitleElem);
         given(ohInfoTitleElem.getText()).willReturn("정보");
 
         // when
