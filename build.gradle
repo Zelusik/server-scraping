@@ -32,7 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
     // Selenium Java
-    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.9.1'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'

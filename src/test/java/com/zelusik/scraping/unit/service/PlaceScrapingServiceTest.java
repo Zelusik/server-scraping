@@ -5,7 +5,6 @@ import com.zelusik.scraping.dto.place.OpeningHourDto;
 import com.zelusik.scraping.dto.place.TimeDto;
 import com.zelusik.scraping.service.PlaceScrapingService;
 import com.zelusik.scraping.util.OpeningHoursConverter;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -216,7 +215,6 @@ class PlaceScrapingServiceTest {
         verifyGetBusinessHours(null, expectedResult, actualResult);
     }
 
-    @NotNull
     private static List<OpeningHourDto> createOpeningHourDtoList() {
         return List.of(
                 OpeningHourDto.of(WED, TimeDto.of(LocalTime.of(10, 30), LocalTime.of(15, 30))),
