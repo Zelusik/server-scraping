@@ -34,28 +34,32 @@ public class PlaceScrapingController {
     @GetMapping
     public PlaceInfoResponse getKakaoPlaceInfo(@RequestParam String kakaoPid) {
         ChromeDriver driver = new ChromeDriver(createOptions);
-        driver.get("https://place.map.kakao.com/" + kakaoPid);
-
-        // Dynamic page가 전부 loading 될 때까지 explicit wait. 최대 10초까지 기다린다.
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mArticle")));
-
-        WebElement mArticle = driver.findElement(By.id("mArticle"));
-
-        BusinessHoursDto businessHours;
         try {
-            businessHours = placeScrapingService.getBusinessHours(mArticle);
-        } catch (NoSuchElementException e) {
-            businessHours = new BusinessHoursDto(null, null);
-        }
+            driver.get("https://place.map.kakao.com/" + kakaoPid);
 
-        String homepageUrl;
-        try {
-            homepageUrl = placeScrapingService.getHomepageUrl(mArticle);
-        } catch (NoSuchElementException e) {
-            homepageUrl = null;
-        }
+            // Dynamic page가 전부 loading 될 때까지 explicit wait. 최대 10초까지 기다린다.
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mArticle")));
 
-        return PlaceInfoResponse.of(businessHours, homepageUrl);
+            WebElement mArticle = driver.findElement(By.id("mArticle"));
+
+            BusinessHoursDto businessHours;
+            try {
+                businessHours = placeScrapingService.getBusinessHours(mArticle);
+            } catch (NoSuchElementException e) {
+                businessHours = new BusinessHoursDto(null, null);
+            }
+
+            String homepageUrl;
+            try {
+                homepageUrl = placeScrapingService.getHomepageUrl(mArticle);
+            } catch (NoSuchElementException e) {
+                homepageUrl = null;
+            }
+
+            return PlaceInfoResponse.of(businessHours, homepageUrl);
+        } finally {
+            driver.quit();
+        }
     }
 }
