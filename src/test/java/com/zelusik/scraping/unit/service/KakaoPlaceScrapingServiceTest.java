@@ -22,7 +22,6 @@ import java.util.List;
 
 import static com.zelusik.scraping.constant.Day.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("[Unit] Place scraping service test")
@@ -60,10 +59,10 @@ class KakaoPlaceScrapingServiceTest {
         given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo > div.placeinfo_default.placeinfo_homepage a.link_homepage"))).willThrow(NoSuchElementException.class);
 
         // when
-        Throwable t = catchThrowable(() -> sut.getHomepageUrl(mArticle));
+        String result = sut.getHomepageUrl(mArticle);
 
         // then
-        assertThat(t).isInstanceOf(NoSuchElementException.class);
+        assertThat(result).isNull();
     }
 
     @DisplayName("영업시간 조회 - 버튼을 눌러 정보 열람 후, 영업시간과 휴무일 모두 있는 경우")
@@ -140,6 +139,74 @@ class KakaoPlaceScrapingServiceTest {
         verifyGetBusinessHours(openingHours, expectedResult, actualResult);
     }
 
+    @DisplayName("영업시간 조회 - 버튼은 있으나 영업시간과 휴무일 정보를 담은 tag 자체를 찾을 수 없는 경우")
+    @Test
+    void notExistsInnerFloor_whenGetBusinessHours_thenReturnEmptyResult() {
+        // given
+        WebElement mArticle = createWebElemMock("mArticle");
+        WebElement button = createWebElemMock("button");
+        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willReturn(button);
+        willDoNothing().given(button).click();
+        given(mArticle.findElement(By.cssSelector("div.details_placeinfo div.fold_floor > div.inner_floor"))).willThrow(NoSuchElementException.class);
+
+        // when
+        BusinessHoursDto result = sut.getBusinessHours(mArticle);
+
+        // then
+        then(mArticle).should().findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"));
+        then(button).should().click();
+        then(mArticle).should().findElement(By.cssSelector("div.details_placeinfo div.fold_floor > div.inner_floor"));
+        then(mArticle).shouldHaveNoMoreInteractions();
+        then(button).shouldHaveNoMoreInteractions();
+        assertThat(result)
+                .isNotNull()
+                .hasAllNullFieldsOrProperties();
+    }
+
+    @DisplayName("영업시간 조회 - 버튼이 없고 영업시간 정보를 담고 있는 상위 tag인 ohInfo도 없는 경우")
+    @Test
+    void notExistsButtonAndOhInfo_whenGetBusinessHours_thenReturnEmptyResult() {
+        // given
+        WebElement mArticle = createWebElemMock("mArticle");
+        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willThrow(NoSuchElementException.class);
+        given(mArticle.findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"))).willThrow(NoSuchElementException.class);
+
+        // when
+        BusinessHoursDto result = sut.getBusinessHours(mArticle);
+
+        // then
+        then(mArticle).should().findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"));
+        then(mArticle).should().findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"));
+        then(mArticle).shouldHaveNoMoreInteractions();
+        assertThat(result)
+                .isNotNull()
+                .hasAllNullFieldsOrProperties();
+    }
+
+    @DisplayName("영업시간 조회 - 버튼이 없고, 제목을 찾지 못하는 경우")
+    @Test
+    void notExistsButtonAndTitle_whenGetBusinessHours_thenReturnEmptyResult() {
+        // given
+        WebElement mArticle = createWebElemMock("mArticle");
+        WebElement ohInfo = createWebElemMock("ohInfo");
+        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willThrow(NoSuchElementException.class);
+        given(mArticle.findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"))).willReturn(ohInfo);
+        given(ohInfo.findElement(By.cssSelector("strong.tit_operation"))).willThrow(NoSuchElementException.class);
+
+        // when
+        BusinessHoursDto result = sut.getBusinessHours(mArticle);
+
+        // then
+        then(mArticle).should().findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"));
+        then(mArticle).should().findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"));
+        then(ohInfo).should().findElement(By.cssSelector("strong.tit_operation"));
+        then(mArticle).shouldHaveNoMoreInteractions();
+        then(ohInfo).shouldHaveNoMoreInteractions();
+        assertThat(result)
+                .isNotNull()
+                .hasAllNullFieldsOrProperties();
+    }
+
     @DisplayName("영업시간 조회 - 버튼이 없고, 영업시간은 있는 경우")
     @Test
     void existsOpeningHours_whenGetBusinessHours_thenReturnResult() {
@@ -175,19 +242,55 @@ class KakaoPlaceScrapingServiceTest {
         // given
         WebElement mArticle = createWebElemMock("mArticle");
         WebElement ohInfo = createWebElemMock("ohInfo");
-        BusinessHoursDto expectedResult = new BusinessHoursDto(null, null);
-        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo " +
-                "div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willThrow(NoSuchElementException.class);
+        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willThrow(NoSuchElementException.class);
         given(mArticle.findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"))).willReturn(ohInfo);
         WebElement ohInfoTitleElem = createWebElemMock("ohInfoTitle");
         given(ohInfo.findElement(By.cssSelector("strong.tit_operation"))).willReturn(ohInfoTitleElem);
         given(ohInfoTitleElem.getText()).willReturn("정보");
 
         // when
-        BusinessHoursDto actualResult = sut.getBusinessHours(mArticle);
+        BusinessHoursDto result = sut.getBusinessHours(mArticle);
 
         // then
-        verifyGetBusinessHours(null, expectedResult, actualResult);
+        then(mArticle).should().findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"));
+        then(mArticle).should().findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"));
+        then(ohInfo).should().findElement(By.cssSelector("strong.tit_operation"));
+        then(ohInfoTitleElem).should().getText();
+        then(mArticle).shouldHaveNoMoreInteractions();
+        then(ohInfo).shouldHaveNoMoreInteractions();
+        then(ohInfoTitleElem).shouldHaveNoMoreInteractions();
+        assertThat(result)
+                .isNotNull()
+                .hasAllNullFieldsOrProperties();
+    }
+
+    @DisplayName("영업시간 조회 - 버튼이 없고, '영업'이 포함된 제목은 있으나 영업시간 정보가 없는 경우")
+    @Test
+    void notExistsOpeningHoursInfo_whenGetBusinessHours_thenEmptyResult() {
+        // given
+        WebElement mArticle = createWebElemMock("mArticle");
+        WebElement ohInfo = createWebElemMock("ohInfo");
+        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willThrow(NoSuchElementException.class);
+        given(mArticle.findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"))).willReturn(ohInfo);
+        WebElement ohInfoTitleElem = createWebElemMock("ohInfoTitle");
+        given(ohInfo.findElement(By.cssSelector("strong.tit_operation"))).willReturn(ohInfoTitleElem);
+        given(ohInfoTitleElem.getText()).willReturn("영업시간");
+        given(ohInfo.findElement(By.cssSelector("ul.list_operation"))).willThrow(NoSuchElementException.class);
+
+        // when
+        BusinessHoursDto result = sut.getBusinessHours(mArticle);
+
+        // then
+        then(mArticle).should().findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"));
+        then(mArticle).should().findElement(By.cssSelector("div.location_detail.openhour_wrap div.location_present"));
+        then(ohInfo).should().findElement(By.cssSelector("strong.tit_operation"));
+        then(ohInfoTitleElem).should().getText();
+        then(ohInfo).should().findElement(By.cssSelector("ul.list_operation"));
+        then(mArticle).shouldHaveNoMoreInteractions();
+        then(ohInfo).shouldHaveNoMoreInteractions();
+        assertThat(result)
+                .isNotNull()
+                .hasAllNullFieldsOrProperties();
     }
 
     private static List<OpeningHourDto> createOpeningHourDtoList() {
