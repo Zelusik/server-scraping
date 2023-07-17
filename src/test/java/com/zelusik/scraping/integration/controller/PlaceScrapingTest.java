@@ -1,6 +1,6 @@
 package com.zelusik.scraping.integration.controller;
 
-import com.zelusik.scraping.controller.PlaceScrapingController;
+import com.zelusik.scraping.controller.KakaoPlaceScrapingController;
 import com.zelusik.scraping.dto.place.OpeningHourDto;
 import com.zelusik.scraping.dto.place.PlaceInfoResponse;
 import com.zelusik.scraping.dto.place.TimeDto;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 class PlaceScrapingTest {
 
     @Autowired
-    private PlaceScrapingController sut;
+    private KakaoPlaceScrapingController sut;
 
     @DisplayName("Kakao place id가 주어지면, 해당 장소의 영업시간, 휴무일, 홈페이지 주소를 가져오고 반환한다.")
     @MethodSource("kakaoPlaceInfos")

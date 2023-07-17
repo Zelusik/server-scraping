@@ -15,7 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class PlaceScrapingService {
+public class KakaoPlaceScrapingService {
 
     private final OpeningHoursConverter converter;
 

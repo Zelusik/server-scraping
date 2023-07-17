@@ -2,7 +2,7 @@ package com.zelusik.scraping.controller;
 
 import com.zelusik.scraping.dto.place.BusinessHoursDto;
 import com.zelusik.scraping.dto.place.PlaceInfoResponse;
-import com.zelusik.scraping.service.PlaceScrapingService;
+import com.zelusik.scraping.service.KakaoPlaceScrapingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,9 @@ import java.time.Duration;
 @RequiredArgsConstructor
 @RequestMapping("/places/scraping")
 @RestController
-public class PlaceScrapingController {
+public class KakaoPlaceScrapingController {
 
-    private final PlaceScrapingService placeScrapingService;
+    private final KakaoPlaceScrapingService kakaoPlaceScrapingService;
     private final ChromeOptions createOptions;
 
     @Operation(summary = "Kakao 장소 정보 scraping",
@@ -45,14 +45,14 @@ public class PlaceScrapingController {
 
             BusinessHoursDto businessHours;
             try {
-                businessHours = placeScrapingService.getBusinessHours(mArticle);
+                businessHours = kakaoPlaceScrapingService.getBusinessHours(mArticle);
             } catch (NoSuchElementException e) {
                 businessHours = new BusinessHoursDto(null, null);
             }
 
             String homepageUrl;
             try {
-                homepageUrl = placeScrapingService.getHomepageUrl(mArticle);
+                homepageUrl = kakaoPlaceScrapingService.getHomepageUrl(mArticle);
             } catch (NoSuchElementException e) {
                 homepageUrl = null;
             }

@@ -3,7 +3,7 @@ package com.zelusik.scraping.unit.service;
 import com.zelusik.scraping.dto.place.BusinessHoursDto;
 import com.zelusik.scraping.dto.place.OpeningHourDto;
 import com.zelusik.scraping.dto.place.TimeDto;
-import com.zelusik.scraping.service.PlaceScrapingService;
+import com.zelusik.scraping.service.KakaoPlaceScrapingService;
 import com.zelusik.scraping.util.OpeningHoursConverter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,10 +26,10 @@ import static org.mockito.BDDMockito.*;
 
 @DisplayName("[Unit] Place scraping service test")
 @ExtendWith(MockitoExtension.class)
-class PlaceScrapingServiceTest {
+class KakaoPlaceScrapingServiceTest {
 
     @InjectMocks
-    private PlaceScrapingService sut;
+    private KakaoPlaceScrapingService sut;
 
     @Mock
     private OpeningHoursConverter converter;
