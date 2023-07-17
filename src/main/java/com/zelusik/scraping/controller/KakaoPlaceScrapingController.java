@@ -43,19 +43,8 @@ public class KakaoPlaceScrapingController {
 
             WebElement mArticle = driver.findElement(By.id("mArticle"));
 
-            BusinessHoursDto businessHours;
-            try {
-                businessHours = kakaoPlaceScrapingService.getBusinessHours(mArticle);
-            } catch (NoSuchElementException e) {
-                businessHours = new BusinessHoursDto(null, null);
-            }
-
-            String homepageUrl;
-            try {
-                homepageUrl = kakaoPlaceScrapingService.getHomepageUrl(mArticle);
-            } catch (NoSuchElementException e) {
-                homepageUrl = null;
-            }
+            BusinessHoursDto businessHours = kakaoPlaceScrapingService.getBusinessHours(mArticle);
+            String homepageUrl = kakaoPlaceScrapingService.getHomepageUrl(mArticle);
 
             return PlaceInfoResponse.of(businessHours, homepageUrl);
         } finally {
