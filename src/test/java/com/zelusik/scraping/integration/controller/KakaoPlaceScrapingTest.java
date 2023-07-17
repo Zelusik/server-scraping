@@ -4,6 +4,7 @@ import com.zelusik.scraping.controller.KakaoPlaceScrapingController;
 import com.zelusik.scraping.dto.place.OpeningHourDto;
 import com.zelusik.scraping.dto.place.PlaceInfoResponse;
 import com.zelusik.scraping.dto.place.TimeDto;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,8 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DisplayName("[Integration] Selenium을 활용해 장소 정보 가져오기")
+@Disabled("실제 가게 정보는 수시로 바뀔 수 있으므로 기능의 정상적인 동작을 확인하기에 불안정하다. 따라서 평소에는 disabled 해놓고 필요할 때 테스트하는 방식으로 사용한다.")
 @SpringBootTest
-class PlaceScrapingTest {
+class KakaoPlaceScrapingTest {
 
     @Autowired
     private KakaoPlaceScrapingController sut;
@@ -37,6 +39,7 @@ class PlaceScrapingTest {
 
         // then
         if (openingHours != null) {
+            assertThat(actualResult.getOpeningHours()).isNotNull();
             assertThat(actualResult.getOpeningHours().size()).isEqualTo(openingHours.size());
             for (int i = 0; i < openingHours.size(); i++) {
                 assertThat(actualResult.getOpeningHours().get(i).getDay()).isEqualTo(openingHours.get(i).getDay());
@@ -60,7 +63,7 @@ class PlaceScrapingTest {
                                 OpeningHourDto.of(FRI, TimeDto.of(LocalTime.of(10, 30), LocalTime.of(15, 30))),
                                 OpeningHourDto.of(SAT, TimeDto.of(LocalTime.of(10, 30), LocalTime.of(15, 30))),
                                 OpeningHourDto.of(SUN, TimeDto.of(LocalTime.of(10, 30), LocalTime.of(15, 30)))),
-                        "월요일", null),
+                        "월요일", "https://app.catchtable.co.kr/ct/shop/moru"),
                 arguments("308342289",
                         List.of(OpeningHourDto.of(MON, TimeDto.of(LocalTime.of(11, 30), LocalTime.of(22, 0))),
                                 OpeningHourDto.of(TUE, TimeDto.of(LocalTime.of(11, 30), LocalTime.of(22, 0))),
@@ -71,13 +74,13 @@ class PlaceScrapingTest {
                                 OpeningHourDto.of(SUN, TimeDto.of(LocalTime.of(11, 30), LocalTime.of(22, 0)))),
                         null, "https://www.instagram.com/toma_wv/"),
                 arguments("25001083",
-                        List.of(OpeningHourDto.of(MON, TimeDto.of(LocalTime.of(7, 30), LocalTime.of(23, 59))),
-                                OpeningHourDto.of(TUE, TimeDto.of(LocalTime.of(7, 30), LocalTime.of(23, 59))),
-                                OpeningHourDto.of(WED, TimeDto.of(LocalTime.of(7, 30), LocalTime.of(23, 59))),
-                                OpeningHourDto.of(THU, TimeDto.of(LocalTime.of(7, 30), LocalTime.of(23, 59))),
-                                OpeningHourDto.of(FRI, TimeDto.of(LocalTime.of(7, 30), LocalTime.of(23, 59))),
-                                OpeningHourDto.of(SAT, TimeDto.of(LocalTime.of(7, 30), LocalTime.of(23, 59))),
-                                OpeningHourDto.of(SUN, TimeDto.of(LocalTime.of(7, 30), LocalTime.of(23, 59)))),
+                        List.of(OpeningHourDto.of(MON, TimeDto.of(LocalTime.of(8, 0), LocalTime.of(0, 0))),
+                                OpeningHourDto.of(TUE, TimeDto.of(LocalTime.of(8, 0), LocalTime.of(0, 0))),
+                                OpeningHourDto.of(WED, TimeDto.of(LocalTime.of(8, 0), LocalTime.of(0, 0))),
+                                OpeningHourDto.of(THU, TimeDto.of(LocalTime.of(8, 0), LocalTime.of(0, 0))),
+                                OpeningHourDto.of(FRI, TimeDto.of(LocalTime.of(8, 0), LocalTime.of(0, 0))),
+                                OpeningHourDto.of(SAT, TimeDto.of(LocalTime.of(8, 0), LocalTime.of(0, 0))),
+                                OpeningHourDto.of(SUN, TimeDto.of(LocalTime.of(8, 0), LocalTime.of(0, 0)))),
                         null, "http://www.mcdonalds.co.kr/"),
                 arguments("24529744",
                         List.of(OpeningHourDto.of(MON, TimeDto.of(LocalTime.of(11, 30), LocalTime.of(22, 0))),
