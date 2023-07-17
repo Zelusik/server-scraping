@@ -40,9 +40,12 @@ public class KakaoPlaceScrapingService {
             return createBusinessHours(openingHours, null);
         }
 
+        // TODO: div.inner_floor, div.displayPeriodList ul이 반드시 존재한다고 가정한 코드. 아닌 경우가 있다면 try-catch로 감싸야한다.
         WebElement operationList = mArticle.findElement(By.cssSelector("div.details_placeinfo div.fold_floor > div.inner_floor"));
-        String openingHours = operationList.findElement(By.cssSelector("ul:nth-child(2)")).getText();
-        return createBusinessHours(openingHours, getClosingHours(operationList));
+        String openingHours = operationList.findElement(By.cssSelector("div.displayPeriodList > ul:nth-child(2)")).getText();
+        System.out.println(openingHours);
+        String closingHours = getClosingHours(operationList);
+        return createBusinessHours(openingHours, closingHours);
     }
 
     private BusinessHoursDto createBusinessHours(String openingHours, String closingHours) {
@@ -72,12 +75,7 @@ public class KakaoPlaceScrapingService {
 
     private String getClosingHours(WebElement operationList) {
         try {
-            if (operationList.findElement(By.cssSelector("strong:nth-child(3)")).getText().equals("휴무일")) {
-                return operationList.findElement(By.cssSelector("ul:nth-child(4)")).getText();
-            } else if (operationList.findElement(By.cssSelector("strong:nth-child(5)")).getText().equals("휴무일")) {
-                return operationList.findElement(By.cssSelector("ul:nth-child(6)")).getText();
-            }
-            return null;
+            return operationList.findElement(By.cssSelector("div.displayOffdayList > ul:nth-child(2)")).getText();
         } catch (NoSuchElementException e) {
             return null;
         }

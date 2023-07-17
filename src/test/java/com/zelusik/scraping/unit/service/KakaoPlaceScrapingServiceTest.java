@@ -5,6 +5,7 @@ import com.zelusik.scraping.dto.place.OpeningHourDto;
 import com.zelusik.scraping.dto.place.TimeDto;
 import com.zelusik.scraping.service.KakaoPlaceScrapingService;
 import com.zelusik.scraping.util.OpeningHoursConverter;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,19 +78,15 @@ class KakaoPlaceScrapingServiceTest {
         String closingHours = "월요일\n화요일";
         BusinessHoursDto expectedResult = new BusinessHoursDto(openingHourDtos, closingHours);
 
-        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo " +
-                "div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willReturn(button);
+        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willReturn(button);
         willDoNothing().given(button).click();
         given(mArticle.findElement(By.cssSelector("div.details_placeinfo div.fold_floor > div.inner_floor"))).willReturn(operationList);
         WebElement openingHoursElem = createWebElemMock("openingHours");
-        given(operationList.findElement(By.cssSelector("ul:nth-child(2)"))).willReturn(openingHoursElem);
+        given(operationList.findElement(By.cssSelector("div.displayPeriodList > ul:nth-child(2)"))).willReturn(openingHoursElem);
         given(openingHoursElem.getText()).willReturn(openingHours);
         WebElement closingHoursTitleElem = createWebElemMock("closingHoursTitle");
-        given(operationList.findElement(By.cssSelector("strong:nth-child(3)"))).willReturn(closingHoursTitleElem);
-        given(closingHoursTitleElem.getText()).willReturn("휴무일");
-        WebElement closingHoursElem = createWebElemMock("closingHours");
-        given(operationList.findElement(By.cssSelector("ul:nth-child(4)"))).willReturn(closingHoursElem);
-        given(closingHoursElem.getText()).willReturn(closingHours);
+        given(operationList.findElement(By.cssSelector("div.displayOffdayList > ul:nth-child(2)"))).willReturn(closingHoursTitleElem);
+        given(closingHoursTitleElem.getText()).willReturn(closingHours);
         given(converter.parseStrToOHs(openingHours)).willReturn(openingHourDtos);
 
         // when
@@ -99,6 +96,11 @@ class KakaoPlaceScrapingServiceTest {
         verifyGetBusinessHours(openingHours, expectedResult, actualResult);
     }
 
+    @Disabled("""
+            23.7.17 기준 "공휴일" 등의 정보가 div.displayPeriodList에 포함되었다.
+            그러므로 현재 코드에서는 "공휴일" 등의 정보를 전혀 추출하지 않고, 그렇기 때문에 바로 위의 test(existsButtonAndOpeningAndClosingHours_whenGetBusinessHours_thenReturnResult)와 로직이 동일하다.
+            어차피 "공휴일" 등의 정보는 현재 필요하지 않지만, 추후 필요할 수도 있으니 단지 test case를 남기기 위해 우선 이 test는 disabled 처리한다.
+            """)
     @DisplayName("영업시간 조회 - 버튼을 눌러 정보 열람 후, 영업시간과 휴무일 모두 있으나 휴무일 이전에 다른 정보(공휴일 등)가 함께 있는 경우")
     @Test
     void existsButtonAndOpeningAndClosingHoursAndAdditionalInfo_whenGetBusinessHours_thenReturnResult() {
@@ -153,9 +155,9 @@ class KakaoPlaceScrapingServiceTest {
         willDoNothing().given(button).click();
         given(mArticle.findElement(By.cssSelector("div.details_placeinfo div.fold_floor > div.inner_floor"))).willReturn(operationList);
         WebElement openingHoursElem = createWebElemMock("openingHours");
-        given(operationList.findElement(By.cssSelector("ul:nth-child(2)"))).willReturn(openingHoursElem);
+        given(operationList.findElement(By.cssSelector("div.displayPeriodList > ul:nth-child(2)"))).willReturn(openingHoursElem);
         given(openingHoursElem.getText()).willReturn(openingHours);
-        given(operationList.findElement(By.cssSelector("strong:nth-child(3)"))).willThrow(NoSuchElementException.class);
+        given(operationList.findElement(By.cssSelector("div.displayOffdayList > ul:nth-child(2)"))).willThrow(NoSuchElementException.class);
         given(converter.parseStrToOHs(openingHours)).willReturn(openingHourDtos);
 
         // when
