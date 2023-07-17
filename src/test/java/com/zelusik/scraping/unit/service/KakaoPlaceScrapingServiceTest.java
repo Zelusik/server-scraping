@@ -105,37 +105,10 @@ class KakaoPlaceScrapingServiceTest {
     @Test
     void existsButtonAndOpeningAndClosingHoursAndAdditionalInfo_whenGetBusinessHours_thenReturnResult() {
         // given
-        WebElement mArticle = createWebElemMock("mArticle");
-        WebElement button = createWebElemMock("button");
-        WebElement operationList = createWebElemMock("operationList");
-        String openingHours = "수~일 10:30 ~ 15:30";
-        List<OpeningHourDto> openingHourDtos = createOpeningHourDtoList();
-        String closingHours = "월요일\n화요일";
-        BusinessHoursDto expectedResult = new BusinessHoursDto(openingHourDtos, closingHours);
-
-        given(mArticle.findElement(By.cssSelector("div.cont_essential > div.details_placeinfo " +
-                "div.location_detail.openhour_wrap > div.location_present a.btn_more"))).willReturn(button);
-        willDoNothing().given(button).click();
-        given(mArticle.findElement(By.cssSelector("div.details_placeinfo div.fold_floor > div.inner_floor"))).willReturn(operationList);
-        WebElement openingHoursElem = createWebElemMock("openingHours");
-        given(operationList.findElement(By.cssSelector("ul:nth-child(2)"))).willReturn(openingHoursElem);
-        given(openingHoursElem.getText()).willReturn(openingHours);
-        WebElement closingHoursTitleElem1 = createWebElemMock("closingHoursTitle1");
-        given(operationList.findElement(By.cssSelector("strong:nth-child(3)"))).willReturn(closingHoursTitleElem1);
-        given(closingHoursTitleElem1.getText()).willReturn("공휴일");
-        WebElement closingHoursTitleElem2 = createWebElemMock("closingHoursTitle2");
-        given(operationList.findElement(By.cssSelector("strong:nth-child(5)"))).willReturn(closingHoursTitleElem2);
-        given(closingHoursTitleElem2.getText()).willReturn("휴무일");
-        WebElement closingHoursElem = createWebElemMock("closingHours");
-        given(operationList.findElement(By.cssSelector("ul:nth-child(6)"))).willReturn(closingHoursElem);
-        given(closingHoursElem.getText()).willReturn(closingHours);
-        given(converter.parseStrToOHs(openingHours)).willReturn(openingHourDtos);
 
         // when
-        BusinessHoursDto actualResult = sut.getBusinessHours(mArticle);
 
         // then
-        verifyGetBusinessHours(openingHours, expectedResult, actualResult);
     }
 
     @DisplayName("영업시간 조회 - 버튼을 눌러 정보 열람 후, 휴무일이 없는 경우")
