@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DisplayName("[Integration] Selenium을 활용해 장소 정보 가져오기")
-@Disabled("실제 가게 정보는 수시로 바뀔 수 있으므로 기능의 정상적인 동작을 확인하기에 불안정하다. 따라서 평소에는 disabled 해놓고 필요할 때 테스트하는 방식으로 사용한다.")
+@Disabled("실제 가게 정보는 수시로 바뀔 수 있으므로 기능의 정상적인 동작을 확인하기에 불안정하다. 따라서 평소에는 비활성화한다.")
 @SpringBootTest
 class KakaoPlaceScrapingTest {
 
