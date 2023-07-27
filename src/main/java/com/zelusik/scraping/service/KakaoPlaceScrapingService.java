@@ -108,4 +108,31 @@ public class KakaoPlaceScrapingService {
             return null;
         }
     }
+
+    @NonNull
+    public List<String> getMenuList(WebElement mArticle) {
+        WebElement contMenu;
+        try {
+            contMenu = mArticle.findElement(By.cssSelector("div.cont_menu"));
+        } catch (NoSuchElementException ex) {
+            // logging
+            return List.of();
+        }
+
+        List<WebElement> menuExtensionBtn = contMenu.findElements(By.cssSelector(".link_more"));
+        while (!menuExtensionBtn.isEmpty() && contMenu.findElements(By.cssSelector(".link_close")).isEmpty()) {
+            menuExtensionBtn.get(0).click();
+        }
+
+        List<WebElement> menus = contMenu.findElements(By.cssSelector("ul.list_menu li span.loss_word"));
+        return menus.stream().map(menu -> {
+                    String text = menu.getText();
+                    if (text.contains("\n")) {  // 가격 정보가 있는 경우
+                        int menuNameIdx = menu.findElements(By.cssSelector("span[class^=\"badge\"]")).size();
+                        return text.split("\n")[menuNameIdx];
+                    }
+                    return text;
+                })
+                .toList();
+    }
 }
